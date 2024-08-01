@@ -1,0 +1,66 @@
+plugins {
+    id 'java' // Java 플러그인 추가
+    id 'org.springframework.boot' version '3.3.2' // Spring Boot 플러그인 추가
+    id 'io.spring.dependency-management' version '1.1.6' // Spring의 의존성 관리를 위한 플러그인 추가
+}
+
+group = 'com.itwill' // 프로젝트 그룹 ID
+version = '0.0.1-SNAPSHOT' // 프로젝트 버전
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21) // Java 버전 21 사용
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor // annotationProcessor 설정을 compileOnly로 확장
+    }
+}
+
+repositories {
+    mavenCentral() // Maven Central 리포지토리 사용
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA를 위한 Spring Boot 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf를 위한 Spring Boot 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-web' // 웹 애플리케이션 개발을 위한 Spring Boot 스타터
+    
+    // Lombok 의존성 설정
+    compileOnly 'org.projectlombok:lombok' // Lombok을 컴파일 시에만 사용
+    testCompileOnly 'org.projectlombok:lombok' // 테스트 컴파일 시에만 Lombok 사용
+    annotationProcessor 'org.projectlombok:lombok' // Lombok을 위한 어노테이션 프로세서
+    testAnnotationProcessor 'org.projectlombok:lombok' // 테스트 시 Lombok을 위한 어노테이션 프로세서
+    
+    developmentOnly 'org.springframework.boot:spring-boot-devtools' // 개발 도구 (hot reload 등)
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11' // Oracle JDBC 드라이버
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // 테스트를 위한 Spring Boot 스타터
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // JUnit 플랫폼 런처
+    
+    // Querydsl 의존성 설정
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // Querydsl JPA 구현체
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta' // Querydsl APT 어노테이션 프로세서
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api' // Jakarta 어노테이션 API
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api' // Jakarta Persistence API
+}
+
+tasks.named('test') {
+    useJUnitPlatform() // JUnit 플랫폼 사용
+}
+
+// Querydsl 관련 빌드 옵션 설정
+def querydslDir = "$buildDir/generated/querydsl" // Querydsl 생성 파일 디렉토리 설정
+
+sourceSets {
+    main.java.srcDirs += [ querydslDir ] // Querydsl 생성 파일 디렉토리를 소스 세트에 추가
+}
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir) // 어노테이션 프로세서가 생성한 소스 파일 디렉토리 설정
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir() // `clean` 작업 후 Querydsl 디렉토리 삭제
+}
