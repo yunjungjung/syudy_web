@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.EqualsAndHashCode;
@@ -23,8 +25,10 @@ import lombok.ToString;
 public class BaseTimeEntity {
     
     @CreatedDate // 엔터티 (최초) 생성시간을 저장하는 필드.
+    @JsonFormat(pattern = "YYYY-MM-dd HH:mm:SS")
     private LocalDateTime createdTime;
     
     @LastModifiedDate // 엔터티 (최종) 수정시간을 저장하는 필드.
+    @JsonFormat(pattern = "YYYY-MM-dd HH:mm:SS")
     private LocalDateTime modifiedTime;
 }
