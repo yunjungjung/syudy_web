@@ -39,14 +39,14 @@ public class PostController {
         model.addAttribute("baseUrl", "/post/list");
     }
     
- //   @PreAuthorize("authenticated()") //-> role에 상관없이 아이디/비밀번호로만 인증.
+    // @PreAuthorize("isAuthenticated()") //-> role에 상관없이 아이디/비밀번호로만 인증.
     @PreAuthorize("hasRole('USER')") //-> role이 일치하는 아이디/비밀번호 인증.
     @GetMapping("/create")
     public void create() {
         log.info("create() GET");
     }
     
-    
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/create")
     public String create(PostCreateDto dto) {
         log.info("POST create(dto={})", dto);
@@ -57,6 +57,7 @@ public class PostController {
         return "redirect:/post/list";
     }
     
+    @PreAuthorize("hasRole('USER')")
     @GetMapping({ "/details", "/modify" })
     public void details(@RequestParam(name = "id") Long id, Model model) {
         log.info("details(id={})", id);
@@ -68,6 +69,7 @@ public class PostController {
         // 요청 주소가 "modify"인 경우에는 modify.html
     }
     
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Long id) {
         log.info("delete(id={})", id);
@@ -77,6 +79,7 @@ public class PostController {
         return "redirect:/post/list";
     }
     
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/update")
     public String update(PostUpdateDto dto) {
         log.info("update(dto={})", dto);

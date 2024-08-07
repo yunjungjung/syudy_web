@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 //-> 스프링 컨테이너에서 필요한 곳에 의존성 주입을 해줌.
 @EnableMethodSecurity
 //-> 컨트롤러 메서드에서 인증(로그인), 권한 설정을 하기 위해서.
-
 public class SecurityConfig {
     
     // Spring Security 5 버전부터 비밀번호는 반드시 암호화를 해야만 함.
@@ -72,26 +71,33 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable());
         
         // 로그인 페이지(폼) 설정 - 스프링 시큐리티에서 제공하는 기본 HTML 페이지를 사용.
-        http.formLogin(Customizer.withDefaults());
-        // TODO: Custom 로그인 HTML 페이지를 사용.
+        // http.formLogin(Customizer.withDefaults());
+        // Custom 로그인 HTML 페이지를 사용.
+        http.formLogin((login) -> login.loginPage("/member/signin"));
         
+        // 페이지 접근 권한, 인증 구성: 아래의 1 또는 2 방법 중 한 가지를 선택.
+        // 1. HttpSecurity.authorizeHttpRequests(Customizer customizer) 메서드에서 설정.
+        //    -> 장점: 한 곳에서 모든 설정을 구성할 수 있음.
+        //    -> 단점: 새로운 요청 경로가 생길 때마다 설정 구성 코드를 수정해야 함.
+        // 2. 컨트롤러 메서드에서 애너테이션으로 설정.
+        //    (1) SecurityConfig 빈에 @EnableMethodSecurity 애너테이션을 설정.
+        //    (2) 각각의 컨트롤러 메서드에서 @PreAuthorize 또는 @PostAuthorize 애너테이션을 설정.
         /*
-        // 페이지 접근 권한, 인증 구성
         http.authorizeHttpRequests((auth) -> 
-                // 모든 요청 주소에 대해서 (role에 상관없이) 아이디/비밀번호 인증을 하는 경우:
-                // auth.anyRequest().authenticated()
+            // 모든 요청 주소에 대해서 (role에 상관없이) 아이디/비밀번호 인증을 하는 경우:
+            // auth.anyRequest().authenticated()
+    
+            // 모든 요청 주소에 대해서 "USER" 권한을 가진 아이디/비밀번호 인증을 하는 경우:
+            // auth.anyRequest().hasRole("USER")
         
-                // 모든 요청 주소에 대해서 "USER" 권한을 가진 아이디/비밀번호 인증을 하는 경우:
-                // auth.anyRequest().hasRole("USER"));
-                
-                // 로그인이 필요한 페이지와 그렇지 않은 페이지를 구분해서 설정 구성:
-                auth.requestMatchers("/post/create", "/post/modify", "/post/details",
-                		"/post/delete", "/post/update", "/api/comment/**")
-                		.authenticated()
-                		.anyRequest()
-                		.permitAll()
+            // 로그인이 필요한 페이지와 그렇지 않은 페이지를 구분해서 설정 구성:
+            auth
+            .requestMatchers("/post/create", "/post/details", "/post/modify", 
+                    "/post/delete", "/post/update", "/api/comment/**")
+            .hasRole("USER")
+            .anyRequest()
+            .permitAll()
         );
-        
         */
         
         return http.build(); // DefaultSecurityFilterChain 객체를 생성해서 리턴.
