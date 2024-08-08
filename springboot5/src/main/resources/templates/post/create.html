@@ -23,7 +23,7 @@
                         <div class="mt-2">
                             <label class="form-label" for="author">작성자</label>
                             <input type="text" class="form-control" id="author"
-                                name="author" required />
+                                name="author" th:value="${#authentication.name}" required />
                         </div>
                         <div class="mt-2">
                             <input type="submit" class="form-control btn btn-success"

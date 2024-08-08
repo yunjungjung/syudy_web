@@ -38,20 +38,21 @@
                                 <a class="nav-link"
                                     th:href="@{/post/create}">새 포스트</a>
                             </li>
-                            <th:block sec:authorize="isAnonymous()"> <!-- 로그인 안된 상태 -->
+                            <th:block sec:authorize="isAnonymous()"> <!-- 로그인 안 된 상태 -->
                                 <li class="nav-item">
-                                    <a class="nav-link" th:href="@{/member/singin}">로그인</a>
+                                    <a class="nav-link" th:href="@{/member/signin}">로그인</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" th:href="@{/member/singup}">회원가입</a>
+                                    <a class="nav-link" th:href="@{/member/signup}">회원가입</a>
                                 </li>
                             </th:block>
                             <th:block sec:authorize="isAuthenticated()"> <!-- 로그인 된 상태 -->
                                 <li class="nav-item">
                                     <!-- spring security에서 로그아웃 기능이 구현된 요청 주소 -->
                                     <a class="nav-link" th:href="@{/logout}">
-                                        <span class="text-secondary" sec:authenication="name"></span>
-                                        <span class="text-primary">로그아웃</span>
+                                        <span class="text-secondary" id="authenticatedUser" 
+                                            sec:authentication="name"></span>
+                                        <span class="mx-1 text-primary">로그아웃</span>
                                     </a>
                                 </li>
                             </th:block>
